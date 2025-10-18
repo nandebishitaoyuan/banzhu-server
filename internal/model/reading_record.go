@@ -24,6 +24,7 @@ type ReadingRecordQueryParam struct {
 }
 
 type ReadingRecordDataVo struct {
-	Index  *int    `json:"index"`
-	Offset *uint64 `json:"offset"`
+	ChapterId *uint64 `json:"chapterId"`
+	Index     *int    `json:"index"`
+	Offset    *uint64 `json:"offset"`
 }

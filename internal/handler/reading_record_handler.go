@@ -6,6 +6,7 @@ import (
 	"httpServerTest/internal/model"
 	"httpServerTest/internal/service"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -59,13 +60,20 @@ func (h *ReadingRecordHandler) Get(context *gin.Context) {
 }
 
 func (h *ReadingRecordHandler) GetListByBookId(context *gin.Context) {
-	var bookId uint64
-	if err := context.ShouldBindQuery(&bookId); err != nil {
-		context.JSON(http.StatusBadRequest, err.Error())
+	id := context.Query("bookId")
+	if id == "" {
+		context.JSON(http.StatusBadRequest, "id不能为空")
 		return
 	}
+	// 将字符串转换为uint
+	id64, err := strconv.ParseUint(id, 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, "id必须是数字"+err.Error())
+		return
+	}
+
 	user := middleware.GetCurrentUser(context)
-	res, err := h.svc.GetListByBookId(bookId, user.ID)
+	res, err := h.svc.GetListByBookId(id64, user.ID)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, err.Error())
 		return
