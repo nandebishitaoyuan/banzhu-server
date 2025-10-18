@@ -18,7 +18,7 @@ func main() {
 	l := logger.New()
 
 	// 加载配置
-	cfg, err := config.Load("./config.yaml")
+	cfg, err := config.Load("/app/config.yaml")
 	if err != nil {
 		l.Fatalf("配置加载失败: %v", err)
 	}
