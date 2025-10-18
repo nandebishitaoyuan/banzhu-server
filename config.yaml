@@ -1,0 +1,26 @@
+server:
+  addr: ":8080"
+
+log:
+  level: "info"
+
+database:
+  dsn: "root:hwt5211314@tcp(47.109.31.100:3307)/book_db?charset=utf8mb4&parseTime=True&loc=Local"
+  max_open_conns: 10
+  max_idle_conns: 5
+
+jwt:
+  access_secret: "fbjakfnajfasjjfnjdfalfna"
+  access_expire_hours: 1
+  refresh_secret: "bnfuieflanacbuauhuandd"
+  refresh_expire_hours: 720
+
+#path:
+#  book: "/data/texts"
+#  chapter: "/data/texts/{}"
+#  images: "/data/images"
+
+path:
+  book: "./data/texts"
+  chapter: "./data/texts/{}"
+  images: "./data/images"
