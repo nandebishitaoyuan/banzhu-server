@@ -16,6 +16,7 @@ func RegisterReadingRecordRoute(cfg *config.Config, router *gin.Engine) {
 	readingRecordRouter.Use(middleware.AuthMiddleware(cfg))
 
 	readingRecordRouter.POST("/update", middleware.DebounceMiddleware(), readingRecordHandler.Update)
+	readingRecordRouter.GET("/getListByBookId", readingRecordHandler.GetListByBookId)
 	readingRecordRouter.POST("/get", readingRecordHandler.Get)
 }
 
@@ -50,6 +51,21 @@ func (h *ReadingRecordHandler) Get(context *gin.Context) {
 	}
 	user := middleware.GetCurrentUser(context)
 	res, err := h.svc.Get(param, user.ID)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	context.JSON(http.StatusOK, res)
+}
+
+func (h *ReadingRecordHandler) GetListByBookId(context *gin.Context) {
+	var bookId uint64
+	if err := context.ShouldBindQuery(&bookId); err != nil {
+		context.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	user := middleware.GetCurrentUser(context)
+	res, err := h.svc.GetListByBookId(bookId, user.ID)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, err.Error())
 		return

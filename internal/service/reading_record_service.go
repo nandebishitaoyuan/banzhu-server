@@ -22,7 +22,7 @@ func (s ReadingRecordService) Update(param model.ReadingRecordDataParam, userId 
 		Offset:    param.Offset,
 		UserId:    &userId,
 	}
-	err := database.DB.Where("book_id = ? AND user_id = ?", param.BookId, userId).Delete(&model.ReadingRecord{}).Error
+	err := database.DB.Where("book_id = ? AND chapter_id = ? AND user_id = ?", param.BookId, param.ChapterId, userId).Delete(&model.ReadingRecord{}).Error
 	if err != nil {
 		return err
 	}
@@ -38,5 +38,15 @@ func (s ReadingRecordService) Get(param model.ReadingRecordQueryParam, userId ui
 		return nil, err
 	}
 	vo := convert.ReadingRecordConvert{}.EntityToVo(dbData)
+	return &vo, nil
+}
+
+func (s ReadingRecordService) GetListByBookId(bookId, userId uint64) (*[]model.ReadingRecordDataVo, error) {
+	var dbData []model.ReadingRecord
+	err := database.DB.Where("book_id = ? AND user_id = ?", bookId, userId).Find(&dbData).Error
+	if err != nil {
+		return nil, err
+	}
+	vo := convert.ReadingRecordConvert{}.EntityListToVoList(dbData)
 	return &vo, nil
 }
