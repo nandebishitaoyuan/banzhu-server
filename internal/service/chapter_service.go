@@ -33,6 +33,12 @@ func (s ChapterService) GetPage(param model.KeywordPageParam[uint64]) (*model.Pa
 	return pageResult, err
 }
 
+func (s ChapterService) GetList(bookId uint64) ([]*model.Chapter, error) {
+	var chapter []*model.Chapter
+	err := database.DB.Where("book_id = ?", bookId).Order("sort").Find(&chapter).Error
+	return chapter, err
+}
+
 func (s ChapterService) DeleteChapter(id uint64) error {
 
 	var chapter *model.Chapter

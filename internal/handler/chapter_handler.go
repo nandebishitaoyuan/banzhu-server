@@ -18,6 +18,7 @@ func RegisterChapterRoute(cfg *config.Config, router *gin.Engine) {
 	bookRouter.Use(middleware.AuthMiddleware(cfg))
 
 	bookRouter.POST("/page", chapterHandler.GetPage)
+	bookRouter.GET("/list", chapterHandler.GetList)
 	bookRouter.GET("/delete", chapterHandler.Delete)
 	bookRouter.GET("/downloadChapter", chapterHandler.DownloadChapter)
 	bookRouter.GET("/downloadImage", chapterHandler.DownloadImage)
@@ -42,6 +43,23 @@ func (h *ChapterHandler) GetPage(c *gin.Context) {
 		return
 	}
 	res, err := h.svc.GetPage(param)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+	}
+	c.JSON(http.StatusOK, res)
+}
+
+func (h *ChapterHandler) GetList(c *gin.Context) {
+	bookId := c.Query("bookId")
+
+	// 将字符串转换为uint
+	id64, err := stringUtil.StringToUint64(bookId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	res, err := h.svc.GetList(id64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 	}
