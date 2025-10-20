@@ -17,6 +17,7 @@ func RegisterReadingRecordRoute(cfg *config.Config, router *gin.Engine) {
 	readingRecordRouter.Use(middleware.AuthMiddleware(cfg))
 
 	readingRecordRouter.POST("/update", middleware.DebounceMiddleware(), readingRecordHandler.Update)
+	readingRecordRouter.GET("/deleteByBookId", readingRecordHandler.DeleteByBookId)
 	readingRecordRouter.GET("/getListByBookId", readingRecordHandler.GetListByBookId)
 	readingRecordRouter.POST("/get", readingRecordHandler.Get)
 }
@@ -79,4 +80,25 @@ func (h *ReadingRecordHandler) GetListByBookId(context *gin.Context) {
 		return
 	}
 	context.JSON(http.StatusOK, res)
+}
+
+func (h *ReadingRecordHandler) DeleteByBookId(context *gin.Context) {
+	id := context.Query("bookId")
+	if id == "" {
+		context.JSON(http.StatusBadRequest, "id不能为空")
+		return
+	}
+	// 将字符串转换为uint
+	id64, err := strconv.ParseUint(id, 10, 64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, "id必须是数字"+err.Error())
+		return
+	}
+	user := middleware.GetCurrentUser(context)
+	err = h.svc.DeleteByBookId(id64, user.ID)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	context.JSON(http.StatusOK, nil)
 }

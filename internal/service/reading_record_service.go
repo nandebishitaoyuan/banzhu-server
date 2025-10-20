@@ -50,3 +50,7 @@ func (s ReadingRecordService) GetListByBookId(bookId, userId uint64) (*[]model.R
 	vo := convert.ReadingRecordConvert{}.EntityListToVoList(dbData)
 	return &vo, nil
 }
+
+func (s ReadingRecordService) DeleteByBookId(bookId, userId uint64) error {
+	return database.DB.Where("book_id = ? AND user_id = ?", bookId, userId).Delete(&model.ReadingRecord{}).Error
+}
