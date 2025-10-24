@@ -14,6 +14,14 @@ func DeleteFile(path string) error {
 	return os.Remove(path)
 }
 
+// DeleteDir 删除文件夹及其内容
+func DeleteDir(path string) error {
+	if !FileExists(path) {
+		return errors.New("文件夹不存在")
+	}
+	return os.RemoveAll(path)
+}
+
 // GetFile 读取文件并返回 *os.File
 func GetFile(path string) (*os.File, error) {
 	file, err := os.Open(path)

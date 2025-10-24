@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strings"
 )
 
 type ChapterService struct {
@@ -122,8 +123,8 @@ func (s ChapterService) syncChapter(books []model.Book) error {
 			if !info.IsDir() {
 
 				bookPath := *book.Path
-				name := info.Name()
-				relPath := bookPath + "/" + name
+				name := strings.ReplaceAll(info.Name(), ".txt", "")
+				relPath := bookPath + "/" + info.Name()
 				absPath, err := filepath.Abs(relPath)
 				if err != nil {
 					return fmt.Errorf("获取绝对路径失败: %w", err)

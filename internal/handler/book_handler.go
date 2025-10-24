@@ -70,7 +70,6 @@ func (h *BookHandler) DeleteBook(c *gin.Context) {
 	if err = h.svc.DeleteBook(id64); err != nil {
 		c.JSON(http.StatusBadRequest, "删除书籍失败！"+err.Error())
 	}
-	err = service.ChapterService{}.DeleteChapterByBookId(id64)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, "删除章节失败！"+err.Error())
 	}

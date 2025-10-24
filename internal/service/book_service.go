@@ -23,6 +23,14 @@ func NewBookService(cfg *config.Config) *BookService {
 	}
 }
 
+func (s *BookService) GetById(bookId uint64) *model.Book {
+	var book model.Book
+	if database.DB.Where("id = ?", bookId).First(&book).Error != nil {
+		return nil
+	}
+	return &book
+}
+
 func (s *BookService) GetPage(param model.KeywordPageParam[string]) (*model.PageResult[model.BookDataVo], error) {
 
 	condition := database.DB.Debug()
@@ -37,7 +45,7 @@ func (s *BookService) GetPage(param model.KeywordPageParam[string]) (*model.Page
 	}
 	vo := convert.BookConvert{}.EntityPageToVoPage(pageResult)
 
-	bookIdList := list.MapSlice(vo.Data, func(t model.BookDataVo) uint64 {
+	bookIdList := list.Map(vo.Data, func(t model.BookDataVo) uint64 {
 		return *t.ID
 	})
 	chapterList, err := NewChapterService(s.cfg).GetChapterByIdList(bookIdList)
@@ -49,14 +57,14 @@ func (s *BookService) GetPage(param model.KeywordPageParam[string]) (*model.Page
 		return *t.BookID
 	})
 
-	bookVoList := list.MapSlice(vo.Data, func(t model.BookDataVo) model.BookDataVo {
+	bookVoList := list.Map(vo.Data, func(t model.BookDataVo) model.BookDataVo {
 		chapters := chapterListMap[*t.ID]
 
 		numberOfChapters := len(chapters)
 
 		t.NumberOfChapters = &numberOfChapters
 
-		wordCountList := list.MapSlice(chapters, func(t1 *model.Chapter) *int {
+		wordCountList := list.Map(chapters, func(t1 *model.Chapter) *int {
 			return t1.WordCount
 		})
 		totalWordCount := 0
@@ -75,7 +83,13 @@ func (s *BookService) GetPage(param model.KeywordPageParam[string]) (*model.Page
 }
 
 func (s *BookService) DeleteBook(id uint64) error {
-	return database.DB.Delete(&model.Book{}, id).Error
+	book := s.GetById(id)
+	var err error
+	if book != nil {
+		err = file.DeleteDir(*book.Path)
+	}
+	err = database.DB.Delete(&model.Book{}, id).Error
+	return err
 }
 
 func (s *BookService) SyncBook() error {
