@@ -5,8 +5,8 @@ import (
 	"httpServerTest/internal/middleware"
 	"httpServerTest/internal/model"
 	"httpServerTest/internal/service"
+	"httpServerTest/pkg/stringUtil"
 	"net/http"
-	"strconv"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -22,6 +22,7 @@ func RegisterBookRoute(cfg *config.Config, router *gin.Engine) {
 
 	bookRouter.POST("/page", bookHandler.GetPage)
 	bookRouter.GET("/delete", bookHandler.DeleteBook)
+	bookRouter.GET("/syncById", bookHandler.SyncBookById)
 	bookHandler.SyncBook(nil)
 }
 
@@ -55,14 +56,10 @@ func (h *BookHandler) GetPage(c *gin.Context) {
 
 func (h *BookHandler) DeleteBook(c *gin.Context) {
 	id := c.Query("id")
-	if id == "" {
-		c.JSON(http.StatusBadRequest, "id不能为空")
-		return
-	}
 	// 将字符串转换为uint
-	id64, err := strconv.ParseUint(id, 10, 64)
+	id64, err := stringUtil.StringToUint64(id)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, "id必须是数字"+err.Error())
+		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -94,4 +91,20 @@ func (h *BookHandler) SyncBook(c *gin.Context) {
 	if c != nil {
 		c.JSON(200, "同步成功")
 	}
+}
+
+func (h *BookHandler) SyncBookById(context *gin.Context) {
+	id := context.Query("id")
+	// 将字符串转换为uint
+	id64, err := stringUtil.StringToUint64(id)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	err = h.svc.SyncBookById(id64)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, "同步指定书籍失败！"+err.Error())
+		return
+	}
+	context.JSON(http.StatusOK, "同步成功")
 }
