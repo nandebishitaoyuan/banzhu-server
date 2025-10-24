@@ -67,17 +67,7 @@ func (s ChapterService) DeleteChapterByBookId(bookId uint64) error {
 		return err
 	}
 	err = database.DB.Where("book_id = ?", bookId).Delete(&model.Chapter{}).Error
-	if err != nil {
-		return err
-	}
-	for _, item := range chapter {
-		err = file.DeleteFile(*item.Path)
-		if err != nil {
-			println(err.Error())
-		}
-	}
-
-	return nil
+	return err
 }
 
 func (s ChapterService) syncChapter(books []model.Book) error {
