@@ -100,9 +100,9 @@ func (h *UserHandler) RefreshToken(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"access_token":  newAccess,
-		"refresh_token": newRefresh,
-		"userInfo":      user,
+		"accessToken":  newAccess,
+		"refreshToken": newRefresh,
+		"userInfo":     user,
 	})
 }
 
