@@ -65,12 +65,6 @@ func (h *BookHandler) DeleteBook(c *gin.Context) {
 
 	// 调用服务
 	err = h.svc.DeleteBook(id64)
-	// 删除章节
-	err = service.ChapterService{}.DeleteChapterByBookId(id64)
-	user := middleware.GetCurrentUser(c)
-	// 删除阅读记录
-	err = service.ReadingRecordService{}.DeleteByBookId(id64, user.ID)
-
 	if err != nil {
 		c.JSON(http.StatusBadRequest, "删除书籍失败！"+err.Error())
 	} else {
@@ -110,8 +104,5 @@ func (h *BookHandler) SyncBookById(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, "同步指定书籍失败！"+err.Error())
 		return
 	}
-	user := middleware.GetCurrentUser(context)
-	// 删除阅读记录
-	err = service.ReadingRecordService{}.DeleteByBookId(id64, user.ID)
 	context.JSON(http.StatusOK, "同步成功")
 }

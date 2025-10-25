@@ -51,6 +51,10 @@ func (s ReadingRecordService) GetListByBookId(bookId, userId uint64) (*[]model.R
 	return &vo, nil
 }
 
-func (s ReadingRecordService) DeleteByBookId(bookId, userId uint64) error {
+func (s ReadingRecordService) DeleteByBookIdAndUserId(bookId, userId uint64) error {
 	return database.DB.Where("book_id = ? AND user_id = ?", bookId, userId).Delete(&model.ReadingRecord{}).Error
+}
+
+func (s ReadingRecordService) DeleteByBookId(bookId uint64) error {
+	return database.DB.Where("book_id = ?", bookId).Delete(&model.ReadingRecord{}).Error
 }

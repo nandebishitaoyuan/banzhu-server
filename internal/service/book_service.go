@@ -88,6 +88,16 @@ func (s *BookService) DeleteBook(id uint64) error {
 	if book != nil {
 		err = file.DeleteDir(*book.Path)
 	}
+	// 删除章节
+	err = ChapterService{}.DeleteChapterByBookId(id)
+	if err != nil {
+		return err
+	}
+	// 删除阅读记录
+	err = ReadingRecordService{}.DeleteByBookId(id)
+	if err != nil {
+		return err
+	}
 	err = database.DB.Delete(&model.Book{}, id).Error
 	return err
 }
@@ -225,6 +235,11 @@ func (s *BookService) SyncBookById(id uint64) error {
 		return err
 	}
 	err = ChapterService{}.DeleteChapterByBookId(id)
+	if err != nil {
+		return err
+	}
+	// 删除阅读记录
+	err = ReadingRecordService{}.DeleteByBookId(id)
 	if err != nil {
 		return err
 	}

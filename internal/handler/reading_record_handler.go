@@ -95,7 +95,7 @@ func (h *ReadingRecordHandler) DeleteByBookId(context *gin.Context) {
 		return
 	}
 	user := middleware.GetCurrentUser(context)
-	err = h.svc.DeleteByBookId(id64, user.ID)
+	err = h.svc.DeleteByBookIdAndUserId(id64, user.ID)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, err.Error())
 		return
