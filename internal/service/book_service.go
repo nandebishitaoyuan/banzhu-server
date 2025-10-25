@@ -89,10 +89,6 @@ func (s *BookService) DeleteBook(id uint64) error {
 		err = file.DeleteDir(*book.Path)
 	}
 	err = database.DB.Delete(&model.Book{}, id).Error
-	if err != nil {
-		return err
-	}
-	err = ChapterService{}.DeleteChapterByBookId(id)
 	return err
 }
 
