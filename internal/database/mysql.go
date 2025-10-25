@@ -10,6 +10,7 @@ import (
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 )
 
@@ -20,8 +21,9 @@ func Init(cfg *config.Config) error {
 	db, err := gorm.Open(mysql.Open(cfg.Database.DSN), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,
-			TablePrefix: "t_",
+			TablePrefix:   "t_",
 		},
+		Logger: logger.Default.LogMode(logger.Silent),
 	})
 
 	if err != nil {
