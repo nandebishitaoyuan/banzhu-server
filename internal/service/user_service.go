@@ -55,3 +55,11 @@ func (s *UserService) Login(username, password string) (model.User, error) {
 	}
 	return user, nil
 }
+
+func (s *UserService) GetUserById(id uint64) (model.User, error) {
+	var user model.User
+	if err := database.DB.Where("id = ?", id).First(&user).Error; err != nil {
+		return model.User{}, errors.New("用户不存在")
+	}
+	return user, nil
+}

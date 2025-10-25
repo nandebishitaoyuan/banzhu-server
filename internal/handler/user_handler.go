@@ -93,10 +93,16 @@ func (h *UserHandler) RefreshToken(c *gin.Context) {
 
 	newAccess, _ := jwt.GenerateAccessToken(claims.UserID, h.cfg)
 	newRefresh, _ := jwt.GenerateRefreshToken(claims.UserID, h.cfg)
+	user, err := h.svc.GetUserById(claims.UserID)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, err.Error())
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"access_token":  newAccess,
 		"refresh_token": newRefresh,
+		"userInfo":      user,
 	})
 }
 
