@@ -26,7 +26,7 @@ func NewChapterService(cfg *config.Config) *ChapterService {
 }
 
 func (s ChapterService) GetPage(param model.KeywordPageParam[uint64]) (*model.PageResult[model.Chapter], error) {
-	condition := database.DB.Where("book_id = ?", param.Keyword).Order("sort")
+	condition := database.DB.Where("book_id = ?", param.Keyword)
 	pageResult, err := database.Paginate[model.Chapter](condition, &param.PageParam)
 	if err != nil {
 		return nil, err
