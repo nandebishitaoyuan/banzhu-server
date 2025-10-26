@@ -14,8 +14,7 @@ type HTTPServer struct {
 }
 
 func NewHTTPServer(cfg *config.Config) *HTTPServer {
-	router := gin.New()
-	router.Use(gin.Recovery())
+	router := gin.Default()
 
 	// 路由
 	handler.RegisterUserRoute(cfg, router)

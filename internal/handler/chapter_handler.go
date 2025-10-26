@@ -22,6 +22,7 @@ func RegisterChapterRoute(cfg *config.Config, router *gin.Engine) {
 	bookRouter.GET("/delete", chapterHandler.Delete)
 	bookRouter.GET("/downloadChapter", chapterHandler.DownloadChapter)
 	bookRouter.GET("/downloadImage", chapterHandler.DownloadImage)
+	bookRouter.POST("/setChapterUrl", chapterHandler.SetChapterUrl)
 }
 
 type ChapterHandler struct {
@@ -114,4 +115,18 @@ func (h *ChapterHandler) DownloadImage(c *gin.Context) {
 	c.Header("Content-Type", "application/octet-stream")
 	c.Header("media-type", "image/png")
 	c.File(path)
+}
+
+func (h *ChapterHandler) SetChapterUrl(context *gin.Context) {
+	var param model.ChapterSetUrlParam
+	if err := context.ShouldBindJSON(&param); err != nil {
+		context.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	err := h.svc.SetChapterUrl(param)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	context.JSON(http.StatusOK, nil)
 }

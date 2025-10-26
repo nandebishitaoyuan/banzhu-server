@@ -167,3 +167,7 @@ func (s ChapterService) GetChapterByIdList(id64List []uint64) ([]*model.Chapter,
 	}
 	return chapter, nil
 }
+
+func (s ChapterService) SetChapterUrl(param model.ChapterSetUrlParam) error {
+	return database.DB.Model(&model.Chapter{}).Where("id = ?", param.ID).Update("url", param.Url).Error
+}

@@ -7,6 +7,12 @@ type Chapter struct {
 	Path      *string   `json:"path" gorm:"size:255"`
 	WordCount *int      `json:"wordCount"`
 	Sort      *int      `json:"sort"`
+	Url       *string   `json:"url" gorm:"size:255"`
 	CreatedAt *JSONTime `json:"createdAt"`
 	UpdatedAt *JSONTime `json:"updatedAt"`
+}
+
+type ChapterSetUrlParam struct {
+	ID  *uint64 `json:"id"`
+	Url *string `json:"url"`
 }
